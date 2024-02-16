@@ -6,6 +6,16 @@ def calculate_wpm(text, time_taken):
     wpm = words / minutes
     return wpm
 
+def calculate_accuracy(target_text, typed_text):
+    target_words = target_text.split()
+    typed_words = typed_text.split()
+
+    correct_words = sum(1 for tw, twt in zip(target_words, typed_words) if tw == twt)
+    total_words = len(target_words)
+
+    accuracy = (correct_words / total_words) * 100
+    return accuracy
+
 def main():
     print("\n")
     print("Type the following text as fast as you can:")
@@ -23,8 +33,12 @@ def main():
     
     time_taken = end_time - start_time
     wpm = calculate_wpm(typed_text, time_taken)
+    
+    accuracy = calculate_accuracy(target_text, typed_text)
+    
     print("\n")
     print(f"Your typing speed is approximately {wpm:.2f} WPM.")
+    print(f"Your accuracy is {accuracy:.2f}%.")
 
 if __name__ == "__main__":
     main()
