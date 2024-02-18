@@ -18,44 +18,62 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setFamily("Georgia")
         MainWindow.setFont(font)
+        
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.promptTitle = QtWidgets.QLabel(self.centralwidget)
         self.promptTitle.setGeometry(QtCore.QRect(140, 30, 511, 81))
+        
         font = QtGui.QFont()
         font.setFamily("Georgia")
         font.setPointSize(36)
+        
         self.promptTitle.setFont(font)
         self.promptTitle.setObjectName("promptTitle")
-        self.loadPrompt = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.load())
+
+        self.loadPrompt = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.multiLambda())
         self.loadPrompt.setGeometry(QtCore.QRect(330, 220, 91, 31))
         self.loadPrompt.setObjectName("loadPrompt")
+        
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit.setGeometry(QtCore.QRect(120, 280, 531, 201))
         self.textEdit.setObjectName("textEdit")
+        self.textEdit.textChanged.connect(self.checkUserInput)
+        
         self.textEdit_2 = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit_2.setGeometry(QtCore.QRect(120, 100, 531, 111))
         self.textEdit_2.setReadOnly(True)
         self.textEdit_2.setPlaceholderText("")
         self.textEdit_2.setObjectName("textEdit_2")
+        
+        
         self.currentWPM = QtWidgets.QLabel(self.centralwidget)
         self.currentWPM.setGeometry(QtCore.QRect(230, 510, 71, 21))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.currentWPM.setFont(font)
         self.currentWPM.setObjectName("currentWPM")
+        
+        
         self.currentAcc = QtWidgets.QLabel(self.centralwidget)
         self.currentAcc.setGeometry(QtCore.QRect(330, 510, 111, 21))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.currentAcc.setFont(font)
         self.currentAcc.setObjectName("currentAcc")
+        
+        #timer
+        self.timer = QtCore.QTimer(MainWindow)
+        self.timer.timeout.connect(self.showTime)
+        self.count = 0
+        self.flag = False
         self.currentTimer = QtWidgets.QLabel(self.centralwidget)
         self.currentTimer.setGeometry(QtCore.QRect(460, 510, 81, 21))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.currentTimer.setFont(font)
         self.currentTimer.setObjectName("currentTimer")
+        
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -64,12 +82,36 @@ class Ui_MainWindow(object):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
-
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
-    def load(self):
-        self.textEdit_2.setText("My mama always said life was like a box of chocolates. You never know what you're gonna get.")
+        
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow) 
+    
+    #function for the button lambda 
+    def multiLambda(self):
+        self.Start()
+        self.load()
+        
+    def showTime(self):
+        if self.flag:
+            self.count += 1
+            text = str(self.count // 10)
+        
+            self.currentTimer.setText(f"Timer: {text}")
+        
+    def Start(self):
+        self.flag = True
+        self.timer.start(100)
+    
+    prompt = "My mama always said life was like a box of chocolates. You never know what you're gonna get."
+    def checkUserInput(self):
+        length = len(self.prompt)
+        
+        if len(self.textEdit.toPlainText()) == length:
+            self.timer.stop()
+        
+    def load(self): #future pull from a database of paragraph and sentences
+        self.textEdit_2.setText(self.prompt)
         
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -77,9 +119,9 @@ class Ui_MainWindow(object):
         self.promptTitle.setText(_translate("MainWindow", "TEST YOUR FINGERS"))
         self.loadPrompt.setText(_translate("MainWindow", "Start"))
         self.textEdit.setPlaceholderText(_translate("MainWindow", "Type here"))
-        self.currentWPM.setText(_translate("MainWindow", "WPM: ##"))
+        self.currentWPM.setText(_translate("MainWindow", f"WPM: ##"))
         self.currentAcc.setText(_translate("MainWindow", "Accuracy: ##"))
-        self.currentTimer.setText(_translate("MainWindow", "Timer: ##"))
+        self.currentTimer.setText(_translate("MainWindow", f"Timer: {self.count}"))
 
 
 if __name__ == "__main__":
