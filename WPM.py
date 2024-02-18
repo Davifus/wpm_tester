@@ -47,20 +47,24 @@ class Ui_MainWindow(object):
         self.textEdit_2.setObjectName("textEdit_2")
         
         
+        self.start_time = None
+        self.total_words_typed = 0
         self.currentWPM = QtWidgets.QLabel(self.centralwidget)
         self.currentWPM.setGeometry(QtCore.QRect(230, 510, 71, 21))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.currentWPM.setFont(font)
         self.currentWPM.setObjectName("currentWPM")
+        self.textEdit.textChanged.connect(self.updateWPM)
         
         
         self.currentAcc = QtWidgets.QLabel(self.centralwidget)
-        self.currentAcc.setGeometry(QtCore.QRect(330, 510, 111, 21))
+        self.currentAcc.setGeometry(QtCore.QRect(320, 510, 160, 21))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.currentAcc.setFont(font)
         self.currentAcc.setObjectName("currentAcc")
+        self.textEdit.textChanged.connect(self.updateAccuracy)
         
         #timer
         self.timer = QtCore.QTimer(MainWindow)
@@ -68,7 +72,7 @@ class Ui_MainWindow(object):
         self.count = 0
         self.flag = False
         self.currentTimer = QtWidgets.QLabel(self.centralwidget)
-        self.currentTimer.setGeometry(QtCore.QRect(460, 510, 81, 21))
+        self.currentTimer.setGeometry(QtCore.QRect(480, 510, 81, 21))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.currentTimer.setFont(font)
@@ -104,12 +108,41 @@ class Ui_MainWindow(object):
         self.timer.start(100)
     
     prompt = "My mama always said life was like a box of chocolates. You never know what you're gonna get."
+    
+    #stop timer based of completed attempt
     def checkUserInput(self):
         length = len(self.prompt)
         
         if len(self.textEdit.toPlainText()) == length:
             self.timer.stop()
+            
+    #accuracy of user input
+    def updateAccuracy(self):
+        user_text = self.textEdit.toPlainText()
+
+        """ correct_characters = sum(1 for prompt_char, user_char in zip(self.prompt, user_text) if prompt_char == user_char)
+        accuracy = correct_characters / len(self.prompt) * 100
+
+        self.currentAcc.setText(f"Accuracy: {accuracy:.2f}%") """
         
+        incorrect_characters = sum(1 for prompt_char, user_char in zip(self.prompt, user_text) if prompt_char != user_char)
+        accuracy = 100 - (incorrect_characters / len(self.prompt) * 100)
+
+        self.currentAcc.setText(f"Accuracy: {accuracy:.2f}%")
+        
+    
+    def updateWPM(self):
+        # Update WPM calculation when text is changed
+        text = self.textEdit.toPlainText()
+        words_typed = len(text.split())
+        if not self.start_time:
+            self.start_time = QtCore.QTime.currentTime()
+        else:
+            elapsed_time = self.start_time.elapsed() / 1000 / 60  # Convert milliseconds to minutes
+            self.total_words_typed += words_typed
+            wpm = self.total_words_typed / elapsed_time
+            self.currentWPM.setText(f"WPM: {wpm:.2f}")
+            
     def load(self): #future pull from a database of paragraph and sentences
         self.textEdit_2.setText(self.prompt)
         
@@ -119,8 +152,8 @@ class Ui_MainWindow(object):
         self.promptTitle.setText(_translate("MainWindow", "TEST YOUR FINGERS"))
         self.loadPrompt.setText(_translate("MainWindow", "Start"))
         self.textEdit.setPlaceholderText(_translate("MainWindow", "Type here"))
-        self.currentWPM.setText(_translate("MainWindow", f"WPM: ##"))
-        self.currentAcc.setText(_translate("MainWindow", "Accuracy: ##"))
+        self.currentWPM.setText(_translate("MainWindow", f"WPM: 0"))
+        self.currentAcc.setText(_translate("MainWindow", "Accuracy: 100.00%"))
         self.currentTimer.setText(_translate("MainWindow", f"Timer: {self.count}"))
 
 
