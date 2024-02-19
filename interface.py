@@ -51,17 +51,25 @@ app.exec_()
 #######features#######
 """ 
 EASY
-- Timer for when you press start
-- a number indicator that shows current wpm
 - separate tab that shows the last 10 attempts 
-- when you finish it a pop will show of the stats 
+- reset button to get a new prompt
+    - reset prompt to new prompt, wpm,acc,timer, and user input box
 
 DIFFICULT
-- redo button to retry the same prompt
-- reset button to get a new prompt
 - highlights red when you mispelled/extra space & etc
 - keyboard picture that highlight depending where you press on the key
 - convert this into a website?
+
+DONE
+- Timer starts when you press start
+- Prompt populates when you press start
+- Accuracy is tracked during typing
+- Timer stop when you finished typing
+- a number indicator that shows current wpm
+- redo button to retry the same prompt
+    - reset wpm,acc,timer, and user input box and make it read only until reset
 """
+
+
 #IMPORTANT DONT DELETE USED FOR CONVERTING PYQT INTO PY FILE TO EDIT
 #pyuic5 -x WPM.ui -o WPM.py
