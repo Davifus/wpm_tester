@@ -48,6 +48,7 @@ class Ui_MainWindow(object):
         self.textEdit_2.setReadOnly(True)
         self.textEdit_2.setPlaceholderText("")
         self.textEdit_2.setObjectName("textEdit_2")
+        self.textEdit_2.setHtml("")  
         
         
         self.start_time = None
@@ -80,6 +81,15 @@ class Ui_MainWindow(object):
         font.setPointSize(12)
         self.currentTimer.setFont(font)
         self.currentTimer.setObjectName("currentTimer")
+        
+        
+        #highlight
+        self.textEdit.textChanged.connect(self.checkUserInput)  # Connect textChanged signal to checkUserInput
+
+        # Set initial style for prompt textEdit_2
+        self.textEdit_2.setStyleSheet(
+            "background-color: lightgray; color: gray;"  # Style to highlight prompt text
+        )
         
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -134,14 +144,8 @@ class Ui_MainWindow(object):
         self.pickPrompt()
         self.textEdit_2.setText(self.prompt)
         
-        
-        
-        
-        
-    
+
     #temp prompt & eventually use database
-    #prompt = "My mama always said life was like a box of chocolates. You never know what you're gonna get."
-    
     def pickPrompt(self):
         prompts = [
         "My mama always said life was like a box of chocolates. You never know what you're gonna get.",
@@ -165,16 +169,25 @@ class Ui_MainWindow(object):
         if len(self.textEdit.toPlainText()) == length:
             self.timer.stop()
             self.textEdit.setReadOnly(True)
+        self.updatePromptInTextEdit2()
+        
+    
+    def updatePromptInTextEdit2(self):
+        user_text = self.textEdit.toPlainText()
+        prompt_text = self.prompt[:len(user_text)]  # Extract the portion of the prompt that matches user input
+
+        # Highlight the prompt text by setting different styles
+        prompt_html = f'<span style="color: gray;">{prompt_text}</span>'  # Apply gray color to prompt text
+        remaining_html = self.prompt[len(user_text):]  # Get the remaining unprompted text
+
+        # Combine the highlighted prompt text and remaining unprompted text
+        combined_html = prompt_html + remaining_html
+        self.textEdit_2.setHtml(combined_html)
 
             
     #accuracy of user input
     def updateAccuracy(self):
         user_text = self.textEdit.toPlainText()
-
-        """ correct_characters = sum(1 for prompt_char, user_char in zip(self.prompt, user_text) if prompt_char == user_char)
-        accuracy = correct_characters / len(self.prompt) * 100
-
-        self.currentAcc.setText(f"Accuracy: {accuracy:.2f}%") """
         
         incorrect_characters = sum(1 for prompt_char, user_char in zip(self.prompt, user_text) if prompt_char != user_char)
         accuracy = 100 - (incorrect_characters / len(self.prompt) * 100)
