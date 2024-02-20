@@ -88,7 +88,7 @@ class Ui_MainWindow(object):
 
         # Set initial style for prompt textEdit_2
         self.textEdit_2.setStyleSheet(
-            "background-color: lightgray; color: gray;"  # Style to highlight prompt text
+            "background-color: lightgray;"  # Style to highlight prompt text
         )
         
         MainWindow.setCentralWidget(self.centralwidget)
